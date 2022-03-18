@@ -11,6 +11,7 @@ import flint.tools.format
 import flint.tools.gendoc
 import flint.tools.tag
 import flint.tools.report
+import flint.tools.makemake
 
 
 def parse():
@@ -103,6 +104,19 @@ def parse():
     report_cmd.add_argument(*arg_srcdirs['flags'], **arg_srcdirs['parameters'])
     report_cmd.add_argument(*arg_incdirs['flags'], **arg_incdirs['parameters'])
     report_cmd.add_argument(*arg_exclude['flags'], **arg_exclude['parameters'])
+
+    # makemake
+    # Note that options and help are defined in the makemake module
+    makemake_cmd = subparsers.add_parser('makemake',
+                       formatter_class=argparse.RawDescriptionHelpFormatter,
+                       **flint.tools.makemake.subparser_params)
+    makemake_cmd.set_defaults(run_cmd=flint.tools.makemake.makemake)
+    makemake_cmd.add_argument(*arg_srcdirs['flags'], **arg_srcdirs['parameters'])
+    makemake_cmd.add_argument(*arg_incdirs['flags'], **arg_incdirs['parameters'])
+    makemake_cmd.add_argument(*arg_exclude['flags'], **arg_exclude['parameters'])
+    for args,params in flint.tools.makemake.subparser_arguments.items():
+        makemake_cmd.add_argument(*args, **params)
+
 
     # If no argument given, then print the help page
     if len(sys.argv) == 1:
