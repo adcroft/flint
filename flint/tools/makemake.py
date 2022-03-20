@@ -106,7 +106,7 @@ def makemake(srcdirs, includes=None, excludes=None, makefile='Makefile.dep',
     tic = __Timer(active=timers)
 
     # Parse all the source code
-    project = flint.parse(*srcdirs, includes=includes, excludes=excludes)
+    project = flint.parse(*srcdirs, includes=includes, excludes=excludes, followlinks=True)
     tic.toc("parsing source code")
 
     # Need to find location of .h files in srcdirs
