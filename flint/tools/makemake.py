@@ -55,6 +55,13 @@ subparser_arguments = {
             'dest': 'timers',
             'default': False,
             'help': 'Report times taken for each stage of the processing. Informational only'
+        },
+        ('--debug', '-d'):
+        {
+            'action': 'store_true',
+            'dest': 'debug',
+            'default': False,
+            'help': 'Dump information to the terminal'
         }
     }
 
@@ -81,7 +88,8 @@ class __Timer:
         self.tic = t
 
 def makemake(srcdirs, includes=None, excludes=None, makefile='Makefile.dep',
-             fcline=None, ldline=None, executable=None, add_hfile_deps=True, timers=False):
+             fcline=None, ldline=None, executable=None, add_hfile_deps=True,
+             timers=False, debug=False):
     """Build "makefile" using "srcdirs".
 
     fcline - the commands to use to compile. Starts with tab character.
@@ -89,6 +97,12 @@ def makemake(srcdirs, includes=None, excludes=None, makefile='Makefile.dep',
     executable - the name to give the executable if only one program is encountered.
     add_hfile_deps - find and add .h files to dependencies.
     """
+
+    if debug:
+        print('srcdirs =',srcdirs)
+        print('includes =',includes)
+        print('excludes =',excludes)
+
     tic = __Timer(active=timers)
 
     # Parse all the source code
@@ -117,6 +131,7 @@ def makemake(srcdirs, includes=None, excludes=None, makefile='Makefile.dep',
     for e in project.externals:
         externals.append( e.name )
     tic.toc("collating external functions")
+    if debug: print('externals =',externals)
 
     with open(makefile, 'w') as ofile:
         print('# %s created by flint makemake'%(makefile), file=ofile)
@@ -125,6 +140,7 @@ def makemake(srcdirs, includes=None, excludes=None, makefile='Makefile.dep',
         # First pass
         # - find all programs (needed in order to have target "all:" at the top)
         for src in project.sources: # For each source file
+            if debug: print('source file =',src.path)
             this_src = src.path
             this_obj = this_src.split('/')[-1].replace('.f90','.o').replace('.F90','.o') # object file
             src_to_obj[this_src] = this_obj
